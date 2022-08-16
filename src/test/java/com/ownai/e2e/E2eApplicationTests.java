@@ -1,9 +1,20 @@
 package com.ownai.e2e;
 
 import com.ownai.e2e.model.Login;
+import com.ownai.e2e.model.RegisteredUser;
 import com.ownai.e2e.pages.*;
+import com.ownai.e2e.pages.cart.Cart;
+import com.ownai.e2e.pages.checkout.Checkout;
+import com.ownai.e2e.pages.pay.PayOnDelivery;
+import com.ownai.e2e.pages.pay.PayWithCassavaPay;
+import com.ownai.e2e.pages.pay.PayWithZipit;
+import com.ownai.e2e.pages.puchase.Category;
+import com.ownai.e2e.pages.puchase.Product;
+import com.ownai.e2e.pages.shipping.Shipping;
+import com.ownai.e2e.pages.user.CreateAccount;
 import com.ownai.e2e.pages.user.LoginPage;
 import com.ownai.e2e.service.LoginService;
+import com.ownai.e2e.service.RegisteredUserService;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -31,11 +42,15 @@ class E2eApplicationTests {
 	@Autowired
 	private LandingPage landingPage;
 
+	@Autowired
+	RegisteredUserService registeredUserService;
 
 	@Autowired
 	private Product product;
 
 	private Checkout checkout;
+
+	private CreateAccount createAccount;
 
 	private Shipping shipping;
 
@@ -48,20 +63,91 @@ class E2eApplicationTests {
 
 	private PayOnDelivery payOnDelivery;
 
-	private Category category = null;
+	@Autowired
+	private Category category;
 
-	private PaymentCompletePage paymentCompletePage = null;
+	@Autowired
+	private PaymentCompletePage paymentCompletePage;
 
-	@Disabled
 	@Test
 	void contextLoads() {
 
 	}
 
+	@DisplayName("Test is a user can checkout with payment on delivery as guest")
+	@Test
+	public void can_user_checkout_with_on_delivery_as_guest() throws InterruptedException {
+		category = (Category) landingPage.selectCategoryGroceries();
+		product = (Product) category.selectProduct();
+		cart = (Cart) product.addToCart().confirmAlert();
+		checkout = (Checkout) cart.proceedToCheckout();
+		payOnDelivery = (PayOnDelivery) checkout
+				.enterEmail()
+				.enterFirstName()
+				.enterLastName()
+				.enterCompany()
+				.enterAddress()
+				.enterCity()
+				.selectCounty()
+				.enterPhoneNumber()
+				.selectShippingMethod()
+				.submitForm();
+
+		paymentCompletePage = (PaymentCompletePage) payOnDelivery
+				.selectRadioBtn()
+				.confirmTermsAndConditions()
+				.submit();
+		String completePayment = paymentCompletePage.getSuccessMessage();
+		System.out.println(completePayment);
+		assertNotNull(completePayment);
+
+	}
 
 	@Test
-	public void can_user_create_account(){
+	public void can_user_checkout_with_paymentondelivery_registered() throws InterruptedException {
 
+		Login login = loginService.findByOne();
+		loginPage.moveToLogin()
+				.setUsername(login.getUsername())
+				.setPassword(login.getPassword())
+				.submit();
+
+		category = landingPage.selectCategoryGroceries();
+		product = category.selectProduct();
+		cart = product.addToCart().confirmAlert();
+		shipping = cart.checkoutRegisteredUser();
+		payOnDelivery = shipping
+				.enterCompany()
+				.enterAddress()
+				.enterCity()
+				.selectCounty()
+				.enterPhoneNumber()
+				.selectShippingMethod()
+				.submitForm();
+
+		paymentCompletePage = payOnDelivery
+				.selectRadioBtn()
+				.confirmTermsAndConditions()
+				.submit();
+
+		String completePayment = paymentCompletePage.getSuccessMessage();
+		assertNotNull(completePayment);
+	}
+
+	@Test
+	public void can_user_create_account() throws InterruptedException {
+		createAccount = new CreateAccount();
+		RegisteredUser user = registeredUserService.findOne();
+		System.out.println(user.getPassword());
+		PageFactory.initElements(driver, createAccount);
+		LoginPage login = (LoginPage) createAccount.setDriver(driver)
+				.moveToCreateAccount()
+				.setName(user.getFirstName())
+				.setEmail(user.getEmail())
+				.setLastName(user.getLastName())
+				.setPassword(user.getPassword())
+				.confirmPassword(user.getPassword())
+				.submit();
 	}
 
 
@@ -70,55 +156,19 @@ class E2eApplicationTests {
 
 	}
 
-	@DisplayName("Test is a user can checkout with payment on delivery as guest")
-	@Test
-	public void can_user_checkout_with_on_delivery_as_guest() throws InterruptedException {
-		PageFactory.initElements(driver,landingPage);
-		category = landingPage.setDriver(driver).selectCategoryGroceries();
-		PageFactory.initElements(driver, category);
-		product = category.selectProduct(driver);
-		PageFactory.initElements(driver,product);
-		cart = product.setDriver(driver).addToCart().confirmAlert();
-		PageFactory.initElements(driver,cart);
-		checkout = cart.setDriver(driver).proceedToCheckout();
-		PageFactory.initElements(driver,checkout);
-		payment = checkout.setDriver(driver)
-				.enterEmail()
-				.enterFirstName()
-				.enterLastName()
-				.enterCompany()
-				.enterAddress()
-				.enterCity()
-				.selectCounty()
-				.enterPhoneNumber()
-				.selectShippingMethod()
-				.submitForm();
-		PageFactory.initElements(driver, payment);
-		paymentCompletePage = payment
-				.setDriver(driver)
-				.selectRadioBtn()
-				.confirmTermsAndConditions()
-				.submit();
-		PageFactory.initElements(driver, paymentCompletePage);
-		String completePayment = paymentCompletePage.getSuccessMessage();
-		assertNotNull(completePayment);
-
-	}
 
 	@Disabled
 	@DisplayName("Test if a user can checkout with zipit as guest")
 	@Test
 	public void can_user_checkout_with_zipit_as_guest() throws InterruptedException {
-		PageFactory.initElements(driver,landingPage);
-		category = landingPage.setDriver(driver).selectCategoryGroceries();
-		PageFactory.initElements(driver, category);
-		product = category.selectProduct(driver);
-		PageFactory.initElements(driver,product);
-		cart = product.setDriver(driver).addToCart().confirmAlert();
-		PageFactory.initElements(driver,cart);
-		checkout = cart.setDriver(driver).proceedToCheckout();
+
+		category = (Category) landingPage.selectCategoryGroceries();
+		product = (Product) category.selectProduct();
+		cart = (Cart) product.addToCart().confirmAlert();
+
+		checkout = (Checkout) cart.proceedToCheckout();
 		PageFactory.initElements(driver,checkout);
-		payment = checkout.setDriver(driver)
+		payment = (PayWithZipit) checkout
 				.enterEmail()
 				.enterFirstName()
 				.enterLastName()
@@ -130,7 +180,7 @@ class E2eApplicationTests {
 				.selectShippingMethod()
 				.submitForm();
 		PageFactory.initElements(driver, payment);
-		paymentCompletePage = payment.setDriver(driver).selectRadioBtn().confirmTermsAndConditions().submit();
+		paymentCompletePage = (PaymentCompletePage) payment.selectRadioBtn().confirmTermsAndConditions().submit();
 		PageFactory.initElements(driver, paymentCompletePage);
 		String completePayment = paymentCompletePage.getSuccessMessage();
 		assertNotNull(completePayment);
@@ -140,15 +190,15 @@ class E2eApplicationTests {
 	@Test
 	public void can_user_checkout_with_paypal_as_guest() throws InterruptedException {
 		PageFactory.initElements(driver,landingPage);
-		category = landingPage.setDriver(driver).selectCategoryGroceries();
+		category = (Category) landingPage.selectCategoryGroceries();
 		PageFactory.initElements(driver, category);
-		product = category.selectProduct(driver);
+		product = (Product) category.selectProduct();
 		PageFactory.initElements(driver,product);
-		cart = product.setDriver(driver).addToCart().confirmAlert();
+		cart = (Cart) product.addToCart().confirmAlert();
 		PageFactory.initElements(driver,cart);
-		checkout = cart.setDriver(driver).proceedToCheckout();
+		checkout = (Checkout) cart.proceedToCheckout();
 		PageFactory.initElements(driver,checkout);
-		payment = checkout.setDriver(driver)
+		payment = (PayWithZipit) checkout
 				.enterEmail()
 				.enterFirstName()
 				.enterLastName()
@@ -160,48 +210,13 @@ class E2eApplicationTests {
 				.selectShippingMethod()
 				.submitForm();
 		PageFactory.initElements(driver, payment);
-		paymentCompletePage = payment.setDriver(driver).selectRadioBtn().confirmTermsAndConditions().submit();
+		paymentCompletePage = (PaymentCompletePage) payment.selectRadioBtn().confirmTermsAndConditions().submit();
 		PageFactory.initElements(driver, paymentCompletePage);
 		String completePayment = paymentCompletePage.getSuccessMessage();
 		assertNotNull(completePayment);
 
 	};
 
-	@Test
-	public void can_user_checkout_with_paymentondelivery_registered() throws InterruptedException {
-		Login login = loginService.findByOne();
-		PageFactory.initElements(driver, loginPage);
-		loginPage.setDriver(driver).moveToLogin()
-				.setUsername(login.getUsername())
-				.setPassword(login.getPassword())
-				.submit();
 
-		PageFactory.initElements(driver,landingPage);
-		category = landingPage.setDriver(driver).selectCategoryGroceries();
-		PageFactory.initElements(driver, category);
-		product = category.selectProduct(driver);
-		PageFactory.initElements(driver,product);
-		cart = product.setDriver(driver).addToCart().confirmAlert();
-		PageFactory.initElements(driver,cart);
-		shipping = cart.setDriver(driver).checkoutRegisteredUser();
-		PageFactory.initElements(driver,shipping);
-		payment = shipping.setDriver(driver)
-				.enterCompany()
-				.enterAddress()
-				.enterCity()
-				.selectCounty()
-				.enterPhoneNumber()
-				.selectShippingMethod()
-				.submitForm();
-		PageFactory.initElements(driver, payment);
-		paymentCompletePage = payment
-				.setDriver(driver)
-				.selectRadioBtn()
-				.confirmTermsAndConditions()
-				.submit();
-		PageFactory.initElements(driver, paymentCompletePage);
-		String completePayment = paymentCompletePage.getSuccessMessage();
-		assertNotNull(completePayment);
-	}
 
 }

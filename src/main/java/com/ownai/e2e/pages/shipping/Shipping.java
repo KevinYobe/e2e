@@ -1,13 +1,18 @@
-package com.ownai.e2e.pages;
+package com.ownai.e2e.pages.shipping;
 
+import com.ownai.e2e.pages.AbstractPage;
+import com.ownai.e2e.pages.pay.PayOnDelivery;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
+import org.springframework.stereotype.Component;
 
-public class Shipping {
+@Component
+public class Shipping extends AbstractPage {
 
     private WebDriver driver;
 
@@ -64,11 +69,10 @@ public class Shipping {
     @FindBy(how = How.XPATH, using = submitBtnXpath)
     private WebElement submitBtn;
 
-    public Shipping setDriver(WebDriver driver) {
-        this.driver = driver;
-        return this;
+    public Shipping(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(this.driver, this);
     }
-
 
     public Shipping enterFirstName() throws InterruptedException {
         Thread.sleep(1000);
@@ -119,7 +123,8 @@ public class Shipping {
         return this;
     }
 
-    public Shipping selectShippingMethod(){
+    public Shipping selectShippingMethod() throws InterruptedException {
+        Thread.sleep(1000);
         new Actions(driver)
                 .moveToElement(selectShippingRadioBtn)
                 .click()
@@ -128,12 +133,13 @@ public class Shipping {
         return this;
     }
 
-    public PayWithZipit submitForm(){
+    public PayOnDelivery submitForm() throws InterruptedException {
+        Thread.sleep(1000);
         new Actions(driver)
                 .moveToElement(submitBtn)
                 .click()
                 .build()
                 .perform();
-        return new PayWithZipit();
+        return new PayOnDelivery(driver);
     }
 }

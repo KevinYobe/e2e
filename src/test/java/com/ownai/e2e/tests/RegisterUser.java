@@ -1,4 +1,4 @@
-package com.ownai.e2e;
+package com.ownai.e2e.tests;
 
 import com.ownai.e2e.model.Login;
 import com.ownai.e2e.model.RegisteredUser;
@@ -37,7 +37,7 @@ public class RegisterUser {
         RegisteredUser user = registeredUserService.findOne();
         System.out.println(user.getPassword());
         PageFactory.initElements(driver, createAccount);
-        LoginPage login = createAccount.setDriver(driver)
+        LoginPage login = (LoginPage) createAccount
                 .moveToCreateAccount()
                 .setName(user.getFirstName())
                 .setEmail(user.getEmail())
@@ -51,7 +51,7 @@ public class RegisterUser {
     public void login() throws InterruptedException {
         Login login = loginService.findByOne();
         PageFactory.initElements(driver, loginPage);
-        loginPage.setDriver(driver).moveToLogin()
+        loginPage.moveToLogin()
                 .setUsername("kev.yobe@gmail.com")
                 .setPassword("password")
                 .submit();

@@ -1,5 +1,6 @@
 package com.ownai.e2e.pages.user;
 
+import com.ownai.e2e.pages.AbstractPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -92,14 +93,14 @@ public class CreateAccount {
         return this;
     }
 
-    public LoginPage submit() throws InterruptedException {
+    public AbstractPage submit() throws InterruptedException {
         Thread.sleep(2000);
         new Actions(driver)
                 .moveToElement(submitButton)
                 .click()
                 .build()
                 .perform();
-        return new LoginPage();
+        return new AbstractPage(driver);
     }
 
 

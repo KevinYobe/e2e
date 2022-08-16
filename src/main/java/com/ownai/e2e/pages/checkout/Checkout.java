@@ -1,19 +1,17 @@
-package com.ownai.e2e.pages;
+package com.ownai.e2e.pages.checkout;
 
+import com.ownai.e2e.pages.AbstractPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.stereotype.Component;
 
-@SpringBootTest
-public class Checkout {
-
-    private WebDriver driver;
-
+@Component
+public class Checkout extends AbstractPage {
     private String email = "kev.yobe@gmail.com";
     private String firstName = "Kevin";
     private String lastName = "Yobe";
@@ -71,14 +69,13 @@ public class Checkout {
     @FindBy(how = How.XPATH, using = submitBtnXpath)
     private WebElement submitBtn;
 
-    public Checkout setDriver(WebDriver driver) {
-        System.out.println("Driver Set");
-        this.driver = driver;
-        return this;
+    public Checkout(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(this.driver, this);
     }
 
     public Checkout enterEmail() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         emailTxtField.sendKeys(email);
         return this;
     }
@@ -141,12 +138,12 @@ public class Checkout {
         return this;
     }
 
-    public PayWithZipit submitForm(){
+    public AbstractPage submitForm(){
         new Actions(driver)
                 .moveToElement(submitBtn)
                 .click()
                 .build()
                 .perform();
-        return new PayWithZipit();
+        return new AbstractPage(driver);
     }
 }

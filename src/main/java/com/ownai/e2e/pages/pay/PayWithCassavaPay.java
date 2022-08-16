@@ -1,12 +1,16 @@
-package com.ownai.e2e.pages;
+package com.ownai.e2e.pages.pay;
 
+import com.ownai.e2e.pages.AbstractPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
+import org.springframework.stereotype.Component;
 
-public class PayWithCassavaPay {
+@Component
+public class PayWithCassavaPay extends AbstractPage {
 
     private WebDriver driver;
     private final String cassavapayOnlineRadioBtnXpath = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[2]/div[1]/input";
@@ -22,10 +26,11 @@ public class PayWithCassavaPay {
     @FindBy(how = How.XPATH, using = cassavapayOnlineSubmitBtnXpath)
     WebElement cassavaPaySubmitBtn;
 
-    public PayWithCassavaPay setDriver(WebDriver driver){
-        this.driver = driver;
-        return this;
+    public PayWithCassavaPay(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(this.driver, this);
     }
+
     public PayWithCassavaPay selectRadioBtn(){
         new Actions(driver)
                 .moveToElement(cassavaPayRadioBtn)
@@ -44,12 +49,12 @@ public class PayWithCassavaPay {
         return this;
     }
 
-    public PaymentCompletePage submit(){
+    public AbstractPage submit(){
         new Actions(driver)
                 .moveToElement(cassavaPaySubmitBtn)
                 .click()
                 .build()
                 .perform();
-        return new PaymentCompletePage();
+        return new AbstractPage(driver);
     }
 }

@@ -1,13 +1,16 @@
-package com.ownai.e2e.pages;
+package com.ownai.e2e.pages.pay;
 
+import com.ownai.e2e.pages.AbstractPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
+import org.springframework.stereotype.Component;
 
-public class PayWithZipit {
+@Component
+public class PayWithZipit extends AbstractPage {
     private WebDriver driver;
     private final String payWithzipitRadioBtn = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[5]/div[1]/input";
     private final String payWithzipitSubmitXpath = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[5]/div[2]/div[4]/div/button";
@@ -24,9 +27,9 @@ public class PayWithZipit {
     @FindBy(how = How.XPATH, using = payWithzipitSubmitXpath)
     WebElement zipitSubmitBtn;
 
-    public PayWithZipit setDriver(WebDriver driver){
-        this.driver = driver;
-        return this;
+    public PayWithZipit(WebDriver driver) {
+        super(driver);
+        PageFactory.initElements(this.driver, this);
     }
 
     public PayWithZipit selectRadioBtn() throws InterruptedException {
@@ -42,22 +45,18 @@ public class PayWithZipit {
 
     public PayWithZipit confirmTermsAndConditions() throws InterruptedException {
         Thread.sleep(5000);
-        new Actions(driver)
-                .moveToElement(zipitTermsAndCondionsCheckBox)
-                .click()
-                .build()
-                .perform();
-           return this;
+        zipitTermsAndCondionsCheckBox.click();
+        return this;
     }
 
-    public PaymentCompletePage submit() throws InterruptedException {
+    public AbstractPage submit() throws InterruptedException {
         Thread.sleep(5000);
         new Actions(driver)
                 .moveToElement(zipitSubmitBtn)
                 .click()
                 .build()
                 .perform();
-        return new PaymentCompletePage();
+        return new AbstractPage(driver);
     }
 
     public void applyDiscountCode(String DiscountCode){

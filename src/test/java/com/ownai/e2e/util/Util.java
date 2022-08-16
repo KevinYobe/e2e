@@ -11,7 +11,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Component;
 
 @SpringBootTest
 public class Util {
@@ -33,9 +32,8 @@ public class Util {
 
     public void createUser() throws InterruptedException {
         RegisteredUser user = registeredUserService.findOne();
-        System.out.println(user.getPassword());
-        PageFactory.initElements(driver, createAccount);
-        LoginPage login = createAccount.setDriver(driver)
+
+        LoginPage login = (LoginPage) createAccount.setDriver(driver)
                 .moveToCreateAccount()
                 .setName(user.getFirstName())
                 .setEmail(user.getEmail())
@@ -48,7 +46,7 @@ public class Util {
     public void login() throws InterruptedException {
         Login login = loginService.findByOne();
         PageFactory.initElements(driver, loginPage);
-        loginPage.setDriver(driver)
+        loginPage
                 .moveToLogin()
                 .setPassword(login.getPassword())
                 .setUsername(login.getUsername())
