@@ -75,9 +75,6 @@ class E2eApplicationTests {
 	}
 
 
-
-
-
 	@Test
 	public void can_user_login(){
 

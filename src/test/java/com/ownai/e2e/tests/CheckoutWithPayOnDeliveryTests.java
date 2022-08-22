@@ -1,5 +1,8 @@
 package com.ownai.e2e.tests;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.ownai.e2e.model.Login;
 import com.ownai.e2e.pages.LandingPage;
 import com.ownai.e2e.pages.PaymentCompletePage;
@@ -55,6 +58,9 @@ public class CheckoutWithPayOnDeliveryTests {
     @Autowired
     Shipping shipping;
 
+    @Autowired
+    ExtentReports extentReports;
+
     @Test
     void contextLoads() {
 
@@ -63,6 +69,7 @@ public class CheckoutWithPayOnDeliveryTests {
     @DisplayName("Test is a user can checkout with payment on delivery as guest")
     @Test
     public void can_user_checkout_with_on_delivery_as_guest() throws InterruptedException {
+        ExtentTest test = extentReports.createTest("Test Cse - Checkout with on deliver as guest");
         landingPage.selectCategoryGroceries();
         category.selectProduct();
         product.addToCart().confirmAlert();
@@ -85,13 +92,20 @@ public class CheckoutWithPayOnDeliveryTests {
                 .submit();
         String completePayment = paymentCompletePage.getSuccessMessage();
         System.out.println(completePayment);
-        assertNotNull(completePayment);
+        if(completePayment.contains("Thank you")){
+            test.log(Status.PASS, "Test case has passed");
+            extentReports.flush();
+        }
+        else {
+            test.log(Status.FAIL, "Test case failed");
+            extentReports.flush();
+        }
 
     }
 
     @Test
     public void can_user_checkout_with_paymentondelivery_registered() throws InterruptedException {
-
+        ExtentTest test = extentReports.createTest("Test Cse - Checkout with on deliver as registered user");
         Login login = loginService.findByOne();
         loginPage.moveToLogin()
                 .setUsername(login.getUsername())
@@ -117,6 +131,14 @@ public class CheckoutWithPayOnDeliveryTests {
                 .submit();
 
         String completePayment = paymentCompletePage.getSuccessMessage();
-        assertNotNull(completePayment);
+        if(completePayment.contains("Thank you")){
+            test.log(Status.PASS, "Test case has passed");
+            extentReports.flush();
+        }
+        else {
+            test.log(Status.FAIL, "Test case failed");
+            extentReports.flush();
+        }
+
     }
 }

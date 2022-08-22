@@ -1,5 +1,8 @@
 package com.ownai.e2e.tests;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.ownai.e2e.model.Login;
 import com.ownai.e2e.pages.LandingPage;
 import com.ownai.e2e.pages.PaymentCompletePage;
@@ -27,6 +30,8 @@ import static org.junit.Assert.assertNotNull;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CheckoutWithZipitTests {
 
+    @Autowired
+    ExtentReports extentReports;
     @Autowired
     private Category category;
 
@@ -56,6 +61,7 @@ public class CheckoutWithZipitTests {
     @DisplayName("Test if a user can checkout with zipit as guest")
     @Test
     public void can_user_checkout_with_zipit_as_guest() throws InterruptedException {
+        ExtentTest test = extentReports.createTest("Test Case - Checkout with on zipit as guest");
 
         landingPage.selectCategoryGroceries();
         category.selectProduct();
@@ -76,12 +82,21 @@ public class CheckoutWithZipitTests {
 
         payment.selectRadioBtn().confirmTermsAndConditions().submit();
         String completePayment = paymentCompletePage.getSuccessMessage();
-        assertNotNull(completePayment);
+        if(completePayment.contains("Thank you")){
+            test.log(Status.PASS, "Test case has passed");
+            extentReports.flush();
+        }
+        else {
+            test.log(Status.FAIL, "Test case failed");
+            extentReports.flush();
+        }
+
     }
 
     @DisplayName("Test if a user can checkout with zipit as guest")
     @Test
     public void can_user_checkout_with_zipit_as_reg_customer() throws InterruptedException {
+        ExtentTest test = extentReports.createTest("Test Case - Checkout with on zipit as registered customer");
         Login login = loginService.findByOne();
         loginPage.moveToLogin()
                 .setUsername(login.getUsername())
@@ -105,7 +120,15 @@ public class CheckoutWithZipitTests {
                 .selectShippingMethod()
                 .submitForm();
         payment.selectRadioBtn().confirmTermsAndConditions().submit();
+
         String completePayment = paymentCompletePage.getSuccessMessage();
-        assertNotNull(completePayment);
+        if(completePayment.contains("Thank you")){
+            test.log(Status.PASS, "Test case has passed");
+            extentReports.flush();
+        }
+        else {
+            test.log(Status.FAIL, "Test case failed");
+            extentReports.flush();
+        }
     }
 }

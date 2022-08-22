@@ -1,5 +1,8 @@
 package com.ownai.e2e.tests;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.ownai.e2e.model.Login;
 import com.ownai.e2e.pages.LandingPage;
 import com.ownai.e2e.pages.PaymentCompletePage;
@@ -48,6 +51,8 @@ public class CheckoutWithPayPalTests {
     private PayWithPayPal payment;
 
     @Autowired
+    ExtentReports extentReports;
+    @Autowired
     private LoginService loginService;
 
     @Autowired
@@ -55,6 +60,8 @@ public class CheckoutWithPayPalTests {
     @DisplayName("Test if a user can checkout with a paypal account as a guest")
     @Test
     public void checkout_with_paypal_guest() throws InterruptedException {
+        ExtentTest test = extentReports.createTest("Test Case - Checkout with paypal as guest");
+
         landingPage.selectCategoryGroceries();
         category.selectProduct();
         product.addToCart().confirmAlert();
@@ -73,12 +80,20 @@ public class CheckoutWithPayPalTests {
 
         payment.selectRadioBtn().confirmTermsAndConditions().submit();
 
+        String paymentComplete = paymentCompletePage.getSuccessMessage();
+
+        if(paymentComplete.contains("Thank you")){
+            test.log(Status.PASS, "Test case has passed");
+        }
+        else {
+            test.log(Status.FAIL, "Test case failed");
+        }
+
     };
 
-    @DisplayName("Test if a user can checkout with a paypal account as a guest")
     @Test
     public void checkout_with_paypal_registerd() throws InterruptedException {
-
+        ExtentTest test = extentReports.createTest("Test Case - Checkout with paypal as registered customer");
         Login login = loginService.findByOne();
         loginPage.moveToLogin()
                 .setUsername(login.getUsername())
@@ -101,6 +116,17 @@ public class CheckoutWithPayPalTests {
                 .submitForm();
 
         payment.selectRadioBtn().confirmTermsAndConditions().submit();
+
+        String paymentComplete = paymentCompletePage.getSuccessMessage();
+
+        if(paymentComplete.contains("Thank you")){
+            test.log(Status.PASS, "Test case has passed");
+            extentReports.flush();
+        }
+        else {
+            test.log(Status.FAIL, "Test case failed");
+            extentReports.flush();
+        }
 
 
     };

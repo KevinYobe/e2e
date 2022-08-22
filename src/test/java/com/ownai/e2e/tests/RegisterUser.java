@@ -1,5 +1,8 @@
 package com.ownai.e2e.tests;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.ownai.e2e.model.Login;
 import com.ownai.e2e.model.RegisteredUser;
 import com.ownai.e2e.pages.user.CreateAccount;
@@ -20,6 +23,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class RegisterUser {
 
     @Autowired
+    WebDriver driver;
+    @Autowired
+    ExtentReports extentReports;
+    @Autowired
     private CreateAccount createAccount;
 
     @Autowired
@@ -32,6 +39,8 @@ public class RegisterUser {
 
     @Test
     public void registerUser() throws InterruptedException {
+        ExtentTest test = extentReports.createTest("Test Case - Registration to Ownai");
+
         RegisteredUser user = registeredUserService.findOne();
         createAccount
                 .moveToCreateAccount()
@@ -41,15 +50,36 @@ public class RegisterUser {
                 .setPassword(user.getPassword())
                 .confirmPassword(user.getPassword())
                 .submit();
+
+        String regComplete = createAccount.getSuccessAlertText();
+        if(regComplete.contains("You must confirm your account. Please check your email for the")){
+            test.log(Status.PASS, "Test case has passed");
+            extentReports.flush();
+        }
+        else {
+            test.log(Status.FAIL, "Test case failed");
+            extentReports.flush();
+        }
     }
 
     @Test
     public void login() throws InterruptedException {
+        ExtentTest test = extentReports.createTest("Test Case - Login  to Ownai");
         Login login = loginService.findByOne();
         loginPage.moveToLogin()
                 .setUsername(login.getUsername())
                 .setPassword(login.getPassword())
                 .submit();
+
+        if(driver.getCurrentUrl()=="http://192.168.84.180/customer/account/index/"){
+            test.log(Status.PASS, "Test case has passed");
+            extentReports.flush();
+        }
+        else {
+            test.log(Status.FAIL, "Test case failed");
+            extentReports.flush();
+        }
+
     }
 
 }

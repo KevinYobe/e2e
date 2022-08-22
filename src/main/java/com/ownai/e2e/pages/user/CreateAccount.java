@@ -6,12 +6,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CreateAccount extends AbstractPage {
 
+    final private String successAlertXpath = "/html/body/div[1]/main/div[1]/div[2]/div/div/div";
     final private String createAccountXpath = "/html/body/div[1]/header/div[1]/div[2]/div/div/div[2]/div/div[4]/div[2]/ul/li[2]/a";
     final private String firstNameXpath = "/html/body/div[1]/main/div[2]/div/form/fieldset[1]/div[1]/div/input";
 
@@ -25,6 +25,8 @@ public class CreateAccount extends AbstractPage {
 
     final private String buttonXpath = "/html/body/div[1]/main/div[2]/div/form/div/div[1]/button";
 
+    @FindBy(how = How.XPATH, using = successAlertXpath)
+    private WebElement successAlert;
     @FindBy(how = How.XPATH, xpath = firstNameXpath)
     private WebElement firstNameTextField;
 
@@ -97,5 +99,10 @@ public class CreateAccount extends AbstractPage {
                 .click()
                 .build()
                 .perform();
+    }
+
+    public String getSuccessAlertText() throws InterruptedException {
+        Thread.sleep(2000);
+        return successAlert.getText();
     }
 }
