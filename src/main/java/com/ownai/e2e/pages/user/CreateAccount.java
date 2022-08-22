@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateAccount {
-    @Autowired
-    private WebDriver driver;
+public class CreateAccount extends AbstractPage {
 
     final private String createAccountXpath = "/html/body/div[1]/header/div[1]/div[2]/div/div/div[2]/div/div[4]/div[2]/ul/li[2]/a";
     final private String firstNameXpath = "/html/body/div[1]/main/div[2]/div/form/fieldset[1]/div[1]/div/input";
@@ -48,9 +46,8 @@ public class CreateAccount {
     @FindBy(how = How.XPATH, xpath = createAccountXpath)
     private WebElement createAccountLink ;
 
-    public CreateAccount setDriver(WebDriver driver){
-        this.driver = driver;
-        return this;
+    public CreateAccount(WebDriver driver) {
+        super(driver);
     }
 
     public CreateAccount moveToCreateAccount() throws InterruptedException {
@@ -93,18 +90,12 @@ public class CreateAccount {
         return this;
     }
 
-    public AbstractPage submit() throws InterruptedException {
+    public void submit() throws InterruptedException {
         Thread.sleep(2000);
         new Actions(driver)
                 .moveToElement(submitButton)
                 .click()
                 .build()
                 .perform();
-        return new AbstractPage(driver);
     }
-
-
-
-
-
 }

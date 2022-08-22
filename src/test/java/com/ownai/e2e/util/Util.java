@@ -33,8 +33,7 @@ public class Util {
     public void createUser() throws InterruptedException {
         RegisteredUser user = registeredUserService.findOne();
 
-        LoginPage login = (LoginPage) createAccount.setDriver(driver)
-                .moveToCreateAccount()
+        createAccount.moveToCreateAccount()
                 .setName(user.getFirstName())
                 .setEmail(user.getEmail())
                 .setLastName(user.getLastName())

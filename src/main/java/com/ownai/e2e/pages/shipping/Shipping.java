@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Shipping extends AbstractPage {
 
-    private WebDriver driver;
 
     private String firstName = "Kevin";
     private String lastName = "Yobe";
@@ -71,7 +70,6 @@ public class Shipping extends AbstractPage {
 
     public Shipping(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(this.driver, this);
     }
 
     public Shipping enterFirstName() throws InterruptedException {
@@ -133,13 +131,12 @@ public class Shipping extends AbstractPage {
         return this;
     }
 
-    public PayOnDelivery submitForm() throws InterruptedException {
+    public void submitForm() throws InterruptedException {
         Thread.sleep(1000);
         new Actions(driver)
                 .moveToElement(submitBtn)
                 .click()
                 .build()
                 .perform();
-        return new PayOnDelivery(driver);
     }
 }

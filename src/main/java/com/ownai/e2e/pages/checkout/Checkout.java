@@ -71,7 +71,6 @@ public class Checkout extends AbstractPage {
 
     public Checkout(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(this.driver, this);
     }
 
     public Checkout enterEmail() throws InterruptedException {
@@ -138,12 +137,11 @@ public class Checkout extends AbstractPage {
         return this;
     }
 
-    public AbstractPage submitForm(){
+    public void submitForm(){
         new Actions(driver)
                 .moveToElement(submitBtn)
                 .click()
                 .build()
                 .perform();
-        return new AbstractPage(driver);
     }
 }

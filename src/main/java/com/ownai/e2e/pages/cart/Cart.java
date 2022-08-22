@@ -23,6 +23,7 @@ public class Cart extends AbstractPage {
     }
     public AbstractPage proceedToCheckout() throws InterruptedException {
         Thread.sleep(10000);
+        System.out.println(driver.getCurrentUrl());
         new Actions(driver)
                 .moveToElement(checkoutBtn)
                 .click()
@@ -31,13 +32,12 @@ public class Cart extends AbstractPage {
         return new AbstractPage(driver);
     }
 
-    public Shipping checkoutRegisteredUser() throws InterruptedException {
+    public void checkoutRegisteredUser() throws InterruptedException {
         Thread.sleep(10000);
         new Actions(driver)
                 .moveToElement(checkoutBtn)
                 .click()
                 .build()
                 .perform();
-        return new Shipping(driver);
     }
 }

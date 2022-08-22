@@ -58,14 +58,13 @@ public class LoginPage extends AbstractPage{
         return this;
     }
 
-    public AbstractPage submit() throws InterruptedException {
+    public void submit() throws InterruptedException {
         Thread.sleep(5000);
        new Actions(driver)
                .moveToElement(button)
                .click()
                .build()
                .perform();
-       return new AbstractPage(driver);
     }
 
 }

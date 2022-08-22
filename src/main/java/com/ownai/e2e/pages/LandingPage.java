@@ -22,13 +22,12 @@ public class LandingPage extends AbstractPage {
         PageFactory.initElements(this.driver, this);
     }
 
-    public Category selectCategoryGroceries(){
+    public void selectCategoryGroceries(){
         new Actions(driver)
                 .moveToElement(categoryImg)
                 .click()
                 .build()
                 .perform();
-        return new Category(driver);
     }
 
 }

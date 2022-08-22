@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PayWithZipit extends AbstractPage {
-    private WebDriver driver;
     private final String payWithzipitRadioBtn = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[5]/div[1]/input";
     private final String payWithzipitSubmitXpath = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[5]/div[2]/div[4]/div/button";
     private final String payWithzipitTermsandConditions = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[5]/div[2]/div[3]/div/div/div/input";
@@ -29,7 +28,6 @@ public class PayWithZipit extends AbstractPage {
 
     public PayWithZipit(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(this.driver, this);
     }
 
     public PayWithZipit selectRadioBtn() throws InterruptedException {
@@ -49,14 +47,13 @@ public class PayWithZipit extends AbstractPage {
         return this;
     }
 
-    public AbstractPage submit() throws InterruptedException {
+    public void submit() throws InterruptedException {
         Thread.sleep(5000);
         new Actions(driver)
                 .moveToElement(zipitSubmitBtn)
                 .click()
                 .build()
                 .perform();
-        return new AbstractPage(driver);
     }
 
     public void applyDiscountCode(String DiscountCode){

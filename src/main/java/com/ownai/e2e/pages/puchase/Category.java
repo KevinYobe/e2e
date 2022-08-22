@@ -21,14 +21,13 @@ public class Category extends AbstractPage {
         super(driver);
     }
 
-    public Product selectProduct() throws InterruptedException {
+    public void selectProduct() throws InterruptedException {
         //Thread.sleep(3000);
         new Actions(driver)
                 .moveToElement(productElement)
                 .click()
                 .build()
                 .perform();
-       return new Product(driver);
     }
 
 }

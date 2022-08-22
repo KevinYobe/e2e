@@ -12,14 +12,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class RegisterUser {
-
-    @Autowired
-    private WebDriver driver;
 
     @Autowired
     private CreateAccount createAccount;
@@ -35,9 +33,7 @@ public class RegisterUser {
     @Test
     public void registerUser() throws InterruptedException {
         RegisteredUser user = registeredUserService.findOne();
-        System.out.println(user.getPassword());
-        PageFactory.initElements(driver, createAccount);
-        LoginPage login = (LoginPage) createAccount
+        createAccount
                 .moveToCreateAccount()
                 .setName(user.getFirstName())
                 .setEmail(user.getEmail())
@@ -50,10 +46,9 @@ public class RegisterUser {
     @Test
     public void login() throws InterruptedException {
         Login login = loginService.findByOne();
-        PageFactory.initElements(driver, loginPage);
         loginPage.moveToLogin()
-                .setUsername("kev.yobe@gmail.com")
-                .setPassword("password")
+                .setUsername(login.getUsername())
+                .setPassword(login.getPassword())
                 .submit();
     }
 

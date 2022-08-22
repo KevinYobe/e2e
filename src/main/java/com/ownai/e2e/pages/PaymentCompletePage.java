@@ -25,21 +25,18 @@ public class PaymentCompletePage extends AbstractPage{
 
     public PaymentCompletePage(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(this.driver, this);
     }
 
     public String getSuccessMessage(){
         return successMessageText.getText();
     }
 
-    public AbstractPage createAccount(){
+    public void createAccount(){
         createAccountBth.click();
-        return new AbstractPage(driver);
     }
 
-    public AbstractPage continueShopping(){
+    public void continueShopping(){
         continueShoppingBtn.click();
-        return new AbstractPage(driver);
     }
 
 

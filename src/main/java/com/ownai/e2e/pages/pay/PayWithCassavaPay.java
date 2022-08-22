@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class PayWithCassavaPay extends AbstractPage {
 
-    private WebDriver driver;
     private final String cassavapayOnlineRadioBtnXpath = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[2]/div[1]/input";
     private final String cassavapayOnlineSubmitBtnXpath = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[2]/div[2]/div[4]/div/button";
     private final String cassavaPayTermsandConditions = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[2]/div[2]/div[3]/div/div/div/input";
@@ -49,12 +48,11 @@ public class PayWithCassavaPay extends AbstractPage {
         return this;
     }
 
-    public AbstractPage submit(){
+    public void submit(){
         new Actions(driver)
                 .moveToElement(cassavaPaySubmitBtn)
                 .click()
                 .build()
                 .perform();
-        return new AbstractPage(driver);
     }
 }

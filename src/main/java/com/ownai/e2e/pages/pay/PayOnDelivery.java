@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PayOnDelivery extends AbstractPage {
-    private WebDriver driver;
     private final String payOnDeliverRadioBtn = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[4]/div[1]/input";
     private final String payOnDeliverySubmitXpath = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[4]/div[2]/div[4]/div/button";
     private final String payOnDeliveryTermsandConditions = "/html/body/div[2]/main/div/div/div[3]/div[4]/ol/li[4]/div/form/fieldset/div[1]/div/div/div[4]/div[2]/div[3]/div/div/div/input";
@@ -28,7 +27,6 @@ public class PayOnDelivery extends AbstractPage {
 
     public PayOnDelivery(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(this.driver, this);
     }
 
     public PayOnDelivery selectRadioBtn(){
@@ -49,12 +47,11 @@ public class PayOnDelivery extends AbstractPage {
         return this;
     }
 
-    public PaymentCompletePage submit(){
+    public void submit(){
         new Actions(driver)
                 .moveToElement(payOnDeliverySubmitBtn)
                 .click()
                 .build()
                 .perform();
-        return new PaymentCompletePage(driver);
     }
 }

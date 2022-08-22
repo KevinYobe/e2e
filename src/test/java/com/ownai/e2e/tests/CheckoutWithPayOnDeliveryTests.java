@@ -17,12 +17,13 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.support.PageFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertNotNull;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CheckoutWithPayOnDeliveryTests {
     @Autowired
     private PaymentCompletePage paymentCompletePage;
@@ -62,11 +63,11 @@ public class CheckoutWithPayOnDeliveryTests {
     @DisplayName("Test is a user can checkout with payment on delivery as guest")
     @Test
     public void can_user_checkout_with_on_delivery_as_guest() throws InterruptedException {
-        category = (Category) landingPage.selectCategoryGroceries();
-        product = (Product) category.selectProduct();
-        cart = (Cart) product.addToCart().confirmAlert();
-        checkout = (Checkout) cart.proceedToCheckout();
-        payOnDelivery = (PayOnDelivery) checkout
+        landingPage.selectCategoryGroceries();
+        category.selectProduct();
+        product.addToCart().confirmAlert();
+        cart.proceedToCheckout();
+        checkout
                 .enterEmail()
                 .enterFirstName()
                 .enterLastName()
@@ -78,7 +79,7 @@ public class CheckoutWithPayOnDeliveryTests {
                 .selectShippingMethod()
                 .submitForm();
 
-        paymentCompletePage = (PaymentCompletePage) payOnDelivery
+        payOnDelivery
                 .selectRadioBtn()
                 .confirmTermsAndConditions()
                 .submit();
@@ -97,11 +98,11 @@ public class CheckoutWithPayOnDeliveryTests {
                 .setPassword(login.getPassword())
                 .submit();
 
-        category = (Category) landingPage.selectCategoryGroceries();
-        product = (Product) category.selectProduct();
-        cart = (Cart) product.addToCart().confirmAlert();
-        shipping = (Shipping) cart.checkoutRegisteredUser();
-        payOnDelivery = (PayOnDelivery) shipping
+        landingPage.selectCategoryGroceries();
+        category.selectProduct();
+        product.addToCart().confirmAlert();
+        cart.checkoutRegisteredUser();
+        shipping
                 .enterCompany()
                 .enterAddress()
                 .enterCity()
@@ -110,7 +111,7 @@ public class CheckoutWithPayOnDeliveryTests {
                 .selectShippingMethod()
                 .submitForm();
 
-        paymentCompletePage = (PaymentCompletePage) payOnDelivery
+        payOnDelivery
                 .selectRadioBtn()
                 .confirmTermsAndConditions()
                 .submit();
